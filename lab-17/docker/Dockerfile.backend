@@ -1,0 +1,26 @@
+# Etapa 1: Compilación de la aplicación Java Spring Boot con Gradle
+FROM gradle:8.8-jdk21-alpine AS builder
+
+# Directorio de trabajo dentro del contenedor para la compilación
+WORKDIR /app
+
+# Copia los archivos del backend desde la nueva ruta del proyecto
+COPY app-academic/backend/uis-academic-backend/ .
+
+# Otorga permisos de ejecución al wrapper de Gradle y genera el empaquetado JAR omitiendo pruebas
+RUN chmod +x gradlew && ./gradlew bootJar -x test --no-daemon --stacktrace
+
+# Etapa 2: Entorno de ejecución ligero para producción
+FROM eclipse-temurin:21-jre-alpine
+
+# Directorio de trabajo definitivo para ejecutar la app
+WORKDIR /app
+
+# Extrae únicamente el artefacto ejecutable comprimido (.jar) generado en la Etapa 1
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+# Declara el puerto de escucha interno del servicio Spring Boot
+EXPOSE 8080
+
+# Comando para iniciar la aplicación backend de Java al levantar el contenedor
+ENTRYPOINT ["java", "-jar", "app.jar"]

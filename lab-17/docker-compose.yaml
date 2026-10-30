@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: db-app-academic
+    environment:
+      POSTGRES_DB: uis_academic_db
+      POSTGRES_USER: uis_user
+      POSTGRES_PASSWORD: uis_password_123
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uis_user -d uis_academic_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+    restart: always
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: back-app-academic
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: localhost
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: uis_academic_db
+      DB_USER: uis_user
+      DB_PASSWORD: uis_password_123
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      JWT_EXPIRATION_MS: 86400000
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
+  front:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: front-app-academic
+    ports:
+      - "80:80"
+    depends_on:
+      - back
+    restart: always

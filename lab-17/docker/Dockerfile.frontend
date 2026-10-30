@@ -1,0 +1,32 @@
+# Etapa 1: Construcción y optimización del frontend en React con Vite
+FROM node:20-alpine AS builder
+
+# Directorio de trabajo interno para el proceso de instalación y empaquetado
+WORKDIR /app
+
+# Copia los archivos de gestión de dependencias de Node
+COPY app-academic/frontend/package*.json ./
+
+# Ejecuta una instalación limpia, exacta y rápida de los paquetes de npm
+RUN npm ci
+
+# Copia todo el código fuente y configuraciones del frontend al contenedor
+COPY app-academic/frontend/ .
+
+# Compila y genera el build estático optimizado para producción en la carpeta /app/dist
+RUN npm run build
+
+# Etapa 2: Servidor web de alto rendimiento con Nginx para entregar los archivos web
+FROM nginx:1.25-alpine
+
+# Traspasa el resultado del build estático de React hacia el directorio raíz público de Nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Inyecta el archivo de configuración personalizado de Nginx reemplazando el archivo por defecto
+COPY app-academic/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Abre el puerto HTTP por defecto del contenedor web
+EXPOSE 80
+
+# Inicia el proceso principal de Nginx en primer plano para mantener vivo el contenedor
+CMD ["nginx", "-g", "daemon off;"]

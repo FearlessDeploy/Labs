@@ -1,0 +1,42 @@
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+
+# Java & Gradle Artifacts (Backend)
+*.class
+*.jar
+*.war
+*.ear
+build/
+bin/
+out/
+.gradle/
+HELP.md
+
+# Node & Frontend Build (Frontend)
+node_modules/
+dist/
+dist-ssr/
+coverage/
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# Operating System & Logs
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
