@@ -1,0 +1,49 @@
+services:
+  db:
+    image: mongo:8
+    container_name: blog_db
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: appuser
+      MONGO_INITDB_ROOT_PASSWORD: apppass
+      MONGO_INITDB_DATABASE: blogdb
+    ports:
+      - "27017:27017"
+    volumes:
+      - blog_data:/data/db
+      - ./database/init.js:/docker-entrypoint-initdb.d/1-init.js:ro
+      - ./database/insert.js:/docker-entrypoint-initdb.d/2-insert.js:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --username appuser --password apppass --authenticationDatabase admin --eval 'db.adminCommand({ ping: 1 })'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - blog_network
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: blog-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - blog_network
+    environment:
+      DB_PORT: "27017"
+      DB_HOST: db
+      DB_NAME: blogdb
+      DB_USER: appuser
+      DB_PASSWORD: apppass
+      DB_AUTH_DB: admin
+volumes:
+  blog_data:
+
+networks:
+  blog_network:
+    driver: bridge
