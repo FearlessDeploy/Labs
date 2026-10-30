@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+    --ink: #17211b;
+    --muted: #68736c;
+    --paper: #f3f1ea;
+    --panel: #fbfaf5;
+    --key: #ffffff;
+    --line: #d9ded8;
+    --green: #84d65b;
+    --green-dark: #347a32;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--ink);
+    background: radial-gradient(circle at 15% 10%, #e1f2d7, transparent 30%), var(--paper);
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.keyboard-validator { max-width: 1300px; margin: 0 auto; padding: 7rem 2rem 4rem; }
+.page-header { max-width: 700px; margin-bottom: 3rem; animation: reveal .6s ease-out both; }
+.eyebrow { margin: 0 0 .8rem; color: var(--green-dark); font: 500 .78rem 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+h1 { margin: 0; font-size: clamp(2.7rem, 7vw, 6.5rem); line-height: .92; letter-spacing: 0; }
+.subtitle { max-width: 510px; margin: 1.4rem 0 0; color: var(--muted); font-size: 1.08rem; line-height: 1.5; }
+.keyboard-panel { padding: 2rem; background: var(--panel); border: 1px solid var(--line); box-shadow: 12px 12px 0 #d9e8d1; animation: reveal .7s .1s ease-out both; }
+.keyboard { display: grid; gap: .55rem; overflow-x: auto; padding-bottom: .3rem; }
+.keyboard-row { display: flex; min-width: 950px; gap: .55rem; }
+.key { flex: 1 0 54px; height: 58px; padding: .25rem; color: var(--ink); background: var(--key); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 3px 0 #cbd1ca; font: 500 .83rem 'DM Mono', monospace; cursor: default; transition: background-color .12s, box-shadow .12s, transform .12s; }
+.key:hover { border-color: var(--green-dark); }
+.key.is-validated { color: #6a5a18; background: #f6e9a7; border-color: #d8c66d; }
+.key.is-pressed { color: #17321b; background: var(--green); border-color: var(--green-dark); box-shadow: 0 1px 0 var(--green-dark); transform: translateY(2px); }
+.key-wide { flex-basis: 69px; height: 42px; }
+.key-tab { flex-grow: 1.45; }
+.key-caps { flex-grow: 1.75; }
+.key-shift { flex-grow: 2.2; }
+.key-enter { flex-grow: 2.15; }
+.key-space { flex-grow: 6; }
+.key-modifier { flex-grow: 1.4; }
+.status { margin: 1.5rem 0 0; color: var(--muted); font: 500 .82rem 'DM Mono', monospace; }
+
+@keyframes reveal { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 700px) {
+    .keyboard-validator { padding: 3.5rem 1rem 2rem; }
+    .keyboard-panel { padding: 1rem; box-shadow: 6px 6px 0 #d9e8d1; }
+    .page-header { margin-bottom: 2rem; }
+    .subtitle { font-size: .95rem; }
+}

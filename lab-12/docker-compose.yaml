@@ -1,0 +1,20 @@
+services:
+
+  monolith:
+    build:
+      context: ./keyboard 
+      dockerfile: ../docker/Dockerfile
+    container_name: keyboard_web
+    restart: unless-stopped
+    volumes:
+      - ./keyboard:/app
+    ports:
+      - "8000:8000"
+    environment:
+      APP_HOST: localhost
+    networks:
+      - keyboard_network
+
+networks:
+  keyboard_network:
+    driver: bridge
