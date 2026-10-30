@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Notas y Promedio UIS | Estimador Académico</title>
+
+    <!-- SEO y OpenGraph -->
+    <meta name="description"
+        content="Calcula cuánto necesitas sacar en tus parciales restantes para aprobar materias UIS y estimador de promedio ponderado semestral.">
+    <meta name="keywords"
+        content="UIS, Calculadora de Notas, Parciales, Promedio Ponderado, Universidad Industrial de Santander">
+    <meta name="author" content="Fearless Deploy Test Apps">
+    <meta name="theme-color" content="#059669">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Calculadora de Notas y Promedio UIS">
+    <meta property="og:description"
+        content="Estima la nota necesaria en tus exámenes restantes para aprobar tus asignaturas en la UIS.">
+    <meta property="og:image"
+        content="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/graduation-cap.svg">
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Tailwind CSS v3 via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tipografía Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
+
+    <!-- Navegación -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm w-full">
+        <div class="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2 min-w-0">
+
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
+                <div
+                    class="h-9 w-9 sm:h-10 sm:w-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center font-black text-lg sm:text-xl shadow-md shadow-emerald-100 shrink-0">
+                    UIS
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-base sm:text-xl font-black text-slate-900 leading-tight tracking-tight truncate">
+                        Estimador Académico
+                    </h1>
+                    <span
+                        class="text-[9px] sm:text-xs font-mono text-emerald-600 font-bold uppercase tracking-wider block mt-0.5 truncate">
+                        Calculadora Estudiantil
+                    </span>
+                </div>
+            </div>
+
+            <div
+                class="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-[11px] sm:text-xs font-bold shrink-0 max-w-full">
+                <button id="tab-course-btn"
+                    class="px-2.5 sm:px-4 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition-all flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                    <i data-lucide="calculator" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                    <span class="inline sm:hidden">Materia</span>
+                    <span class="hidden sm:inline">Notas por Materia</span>
+                </button>
+
+                <button id="tab-gpa-btn"
+                    class="px-2.5 sm:px-4 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition-all flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                    <i data-lucide="award" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+                    <span class="inline sm:hidden">Promedio</span>
+                    <span class="hidden sm:inline">Promedio Semestral</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Calculadora de notas por materia -->
+    <section id="section-course"
+        class="max-w-6xl mx-auto px-6 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+
+        <div class="lg:col-span-7 space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                    <h2 class="font-extrabold text-slate-900 text-lg flex items-center gap-2">
+                        <i data-lucide="book-open" class="text-emerald-600 w-5 h-5"></i> Configurar Materia
+                    </h2>
+                    <span
+                        class="text-xs font-mono font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-200">
+                        Nota Mínima Aprobatoria: 3.0
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <div class="sm:col-span-8 space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Nombre de la Asignatura</label>
+                        <input type="text" id="course-name" value="Cálculo II"
+                            class="w-full h-11 px-3 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div class="sm:col-span-4 space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Nota Objetivo</label>
+                        <input type="number" id="target-grade" value="3.0" min="3.0" max="5.0" step="0.1"
+                            class="w-full h-11 px-3 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold text-emerald-700 text-center focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <form id="cut-form"
+                    class="pt-2 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end border-t border-slate-100">
+                    <div class="sm:col-span-5 space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Evaluación / Parcial</label>
+                        <input type="text" id="cut-name" required placeholder="Ej. Parcial 1"
+                            class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div class="sm:col-span-3 space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Porcentaje (%)</label>
+                        <input type="number" id="cut-weight" required min="1" max="100" placeholder="25"
+                            class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-center focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div class="sm:col-span-4 space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Nota Obtenida (Opcional)</label>
+                        <input type="number" id="cut-grade" min="0" max="5" step="0.1" placeholder="Ej. 3.5"
+                            class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-center focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <button type="submit"
+                        class="sm:col-span-12 h-10 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 mt-1">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Agregar Evaluación al Corte
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 text-sm">Estructura de Evaluación</h3>
+                    <span id="total-weight-badge"
+                        class="text-xs font-mono font-bold bg-white px-2.5 py-0.5 rounded border border-slate-200 text-slate-700">0%
+                        de 100%</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-100/70 text-slate-500 uppercase text-[10px] font-bold">
+                            <tr>
+                                <th class="p-3.5">Evaluación</th>
+                                <th class="p-3.5 text-center">Peso (%)</th>
+                                <th class="p-3.5 text-center">Nota Obtenida</th>
+                                <th class="p-3.5 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuts-list" class="divide-y divide-slate-100 font-medium">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-6">
+            <div id="prediction-card"
+                class="bg-gradient-to-br from-emerald-900 to-slate-900 text-white p-7 rounded-2xl shadow-xl space-y-5 relative overflow-hidden">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-300 uppercase tracking-widest block">Nota Necesaria
+                            en lo Faltante</span>
+                        <div id="needed-grade" class="text-5xl font-black mt-2 font-mono text-white">0.0</div>
+                    </div>
+                    <span id="course-status-badge"
+                        class="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Calculando...
+                    </span>
+                </div>
+
+                <p id="prediction-msg"
+                    class="text-xs text-slate-300 leading-relaxed italic bg-white/5 p-3 rounded-lg border border-white/10">
+                    Ingresa tus parciales evaluados y por evaluar para calcular la nota exacta.
+                </p>
+
+                <div class="pt-4 border-t border-slate-700/60 grid grid-cols-2 gap-4 text-xs font-mono">
+                    <div>
+                        <span class="text-slate-400 block">Acumulado Actual:</span>
+                        <strong id="accumulated-grade" class="text-base font-bold text-emerald-400">0.0</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">% Faltante por Rendir:</span>
+                        <strong id="remaining-weight" class="text-base font-bold text-amber-400">100%</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculadora de promedio semestral -->
+    <section id="section-gpa"
+        class="max-w-6xl mx-auto px-6 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full hidden">
+        <div class="lg:col-span-7 space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="font-extrabold text-slate-900 text-lg flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="text-blue-600 w-5 h-5"></i> Agregar Materia al Semestre
+                </h2>
+
+                <form id="gpa-form" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                    <div class="sm:col-span-6 space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Materia</label>
+                        <input type="text" id="gpa-subject-name" required placeholder="Ej. Física II"
+                            class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div class="sm:col-span-3 space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Créditos</label>
+                        <input type="number" id="gpa-credits" required min="1" max="10" value="4"
+                            class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-center focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div class="sm:col-span-3 space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Nota Final</label>
+                        <input type="number" id="gpa-grade" required min="0" max="5" step="0.1" placeholder="4.0"
+                            class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-center focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <button type="submit"
+                        class="sm:col-span-12 h-10 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 mt-1 shadow-md shadow-blue-200">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Guardar Materia en Semestre
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 text-sm">Materias del Semestre</h3>
+                    <span id="gpa-count"
+                        class="text-xs font-mono font-bold bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-600">0
+                        materias</span>
+                </div>
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-100/70 text-slate-500 uppercase text-[10px] font-bold">
+                        <tr>
+                            <th class="p-3.5">Materia</th>
+                            <th class="p-3.5 text-center">Créditos</th>
+                            <th class="p-3.5 text-center">Nota</th>
+                            <th class="p-3.5 text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gpa-list" class="divide-y divide-slate-100 font-medium">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-6">
+            <div class="bg-gradient-to-br from-blue-950 to-slate-900 text-white p-7 rounded-2xl shadow-xl space-y-4">
+                <span class="text-xs font-bold text-blue-300 uppercase tracking-widest block">Promedio Ponderado
+                    Semestral</span>
+                <div id="gpa-val" class="text-5xl font-black font-mono text-blue-400">0.0</div>
+                <div class="pt-4 border-t border-slate-700/60 grid grid-cols-2 gap-4 text-xs font-mono">
+                    <div><span class="text-slate-400 block">Total Créditos:</span><strong id="gpa-total-credits"
+                            class="text-white">0</strong></div>
+                    <div><span class="text-slate-400 block">Total Materias:</span><strong id="gpa-total-subjects"
+                            class="text-white">0</strong></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4 text-blue-600"></i> Rendimiento Ponderado
+                </h3>
+                <div class="h-56 relative">
+                    <canvas id="gpa-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 mt-auto">
+            UIS Promedio v1.0.0 - Test App para Fearless Deploy © 2026
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

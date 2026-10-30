@@ -1,0 +1,9 @@
+services:
+  front:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: front-app-promedio
+    ports:
+      - "8080:80"
+    restart: always
