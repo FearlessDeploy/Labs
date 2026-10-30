@@ -1,0 +1,31 @@
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+wheels/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.iml
+
+# Operating System & Logs
+.DS_Store
+Thumbs.db
+*.log

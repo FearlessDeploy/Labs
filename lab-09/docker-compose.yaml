@@ -1,0 +1,45 @@
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: verb_app_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: verb_app
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/1-init.sql:ro
+      - ./database/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: verb_app_api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: "db"
+      DB_PORT: "3306"
+      DB_NAME: "verb_app"
+      DB_USER: "appuser"
+      DB_PASSWORD: "apppass"
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+volumes:
+  mysql_data:
