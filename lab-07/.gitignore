@@ -1,0 +1,31 @@
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+wheels/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.iml
+
+# Operating System & Logs
+.DS_Store
+Thumbs.db
+*.log

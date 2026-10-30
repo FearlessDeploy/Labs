@@ -1,0 +1,9 @@
+services:
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: recommendation-song
+    ports:
+      - "8000:8000"
