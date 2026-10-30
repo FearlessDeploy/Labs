@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Prueba de mecanografía</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'app/typing_test.css' %}">
+</head>
+<body>
+<main>
+
+    <h1>Prueba de mecanografía</h1>
+
+    {% if error %}
+        <p id="error-message">{{ error }}</p>
+    {% else %}
+
+        <button id="start-button">Iniciar</button>
+
+        <div class="typing-box">
+            <div
+                id="text-to-type"
+                data-text="{{ typing_text.content|escapejs }}"
+                hidden>
+            </div>
+            <textarea
+                id="typing-input"
+                rows="6"
+                disabled
+                placeholder="Pulsa Iniciar para comenzar"></textarea>
+        </div>
+
+        <div class="stats">
+            <p>Tiempo: <span id="time">0</span> segundos</p>
+            <p>WPM: <span id="wpm">0</span></p>
+            <p>Precisión: <span id="accuracy">0</span>%</p>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Resultado</h2>
+            <p>Velocidad: <span id="final-wpm"></span> WPM</p>
+            <p>Precisión: <span id="final-accuracy"></span>%</p>
+
+            <button onclick="location.reload()">
+                Intentar de nuevo
+            </button>
+        </div>
+
+        <script>
+            const textElement = document.getElementById("text-to-type");
+            const textToType = textElement.dataset.text;
+            const startButton = document.getElementById("start-button");
+            const typingInput = document.getElementById("typing-input");
+
+            const timeElement = document.getElementById("time");
+            const wpmElement = document.getElementById("wpm");
+            const accuracyElement = document.getElementById("accuracy");
+
+            const resultsElement = document.getElementById("results");
+            const finalWpmElement = document.getElementById("final-wpm");
+            const finalAccuracyElement =
+                document.getElementById("final-accuracy");
+
+            let startTime = null;
+            let timer = null;
+            let testStarted = false;
+            let testFinished = false;
+
+            startButton.addEventListener("click", () => {
+                if (testStarted) {
+                    return;
+                }
+
+                testStarted = true;
+                startTime = Date.now();
+
+                textElement.hidden = false;
+                renderText();
+                typingInput.disabled = false;
+                typingInput.focus();
+
+                startButton.disabled = true;
+
+                timer = setInterval(updateStats, 100);
+            });
+
+            typingInput.addEventListener("input", () => {
+                if (!testStarted || testFinished) {
+                    return;
+                }
+
+                renderText();
+                updateStats();
+
+                if (typingInput.value.length >= textToType.length) {
+                    finishTest();
+                }
+            });
+
+            function renderText() {
+                textElement.replaceChildren();
+
+                for (let i = 0; i < textToType.length; i++) {
+                    const character = document.createElement("span");
+                    character.textContent = textToType[i];
+
+                    if (i < typingInput.value.length) {
+                        character.className =
+                            typingInput.value[i] === textToType[i]
+                                ? "correct"
+                                : "incorrect";
+                    }
+
+                    textElement.appendChild(character);
+                }
+            }
+
+            function updateStats() {
+                if (!startTime) {
+                    return;
+                }
+
+                const elapsedSeconds =
+                    (Date.now() - startTime) / 1000;
+
+                const elapsedMinutes = elapsedSeconds / 60;
+
+                let correctCharacters = 0;
+                let totalErrors = 0;
+
+                for (let i = 0; i < typingInput.value.length; i++) {
+                    if (typingInput.value[i] === textToType[i]) {
+                        correctCharacters++;
+                    } else {
+                        totalErrors++;
+                    }
+                }
+
+                const wpm = elapsedMinutes > 0
+                    ? (typingInput.value.length / 5) / elapsedMinutes
+                    : 0;
+
+                const accuracy = typingInput.value.length > 0
+                    ? (correctCharacters / typingInput.value.length) * 100
+                    : 100;
+
+                timeElement.textContent = elapsedSeconds.toFixed(1);
+                wpmElement.textContent = wpm.toFixed(2);
+                accuracyElement.textContent = accuracy.toFixed(2);
+            }
+
+            function finishTest() {
+                testFinished = true;
+                clearInterval(timer);
+
+                updateStats();
+
+                typingInput.disabled = true;
+
+                finalWpmElement.textContent = wpmElement.textContent;
+                finalAccuracyElement.textContent =
+                    accuracyElement.textContent;
+
+                resultsElement.style.display = "block";
+            }
+        </script>
+
+    {% endif %}
+</main>
+</body>
+</html>

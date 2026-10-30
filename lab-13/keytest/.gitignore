@@ -1,0 +1,36 @@
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+wheels/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Django & Database Artifacts
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.iml
+
+# Operating System & Logs
+.DS_Store
+Thumbs.db
+*.log
