@@ -1,0 +1,8 @@
+services:
+  back:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: record-api
+    ports:
+      - "8080:8080"
