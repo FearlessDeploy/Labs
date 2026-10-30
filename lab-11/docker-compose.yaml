@@ -1,0 +1,43 @@
+services:
+  
+  db:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    environment:
+      REDIS_PASSWORD: redispassword
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - poll_network
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: poll_api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - poll_network
+    environment:
+      DB_HOST: db
+      DB_PORT: "6379"
+      DB_PASSWORD: redispassword
+    ports:
+      - "8000:8000"
+
+volumes:
+  redis-data:
+
+networks:
+  poll_network:
+    driver: bridge
