@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: #f8f9fa;
+        /* Fondo claro oficial de Google Docs / Google Drive */
+        color: #1f1f1f;
+    }
+}
+
+/* Estilos para el contenedor de vista previa estilo hoja de Google Docs */
+.markdown-body {
+    color: #1f1f1f;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.markdown-body h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0b57d0;
+    /* Azul Google Docs */
+    margin-top: 1.25rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 0.4rem;
+}
+
+.markdown-body h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #1f1f1f;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 0.2rem;
+}
+
+.markdown-body h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #3c4043;
+    margin-top: 0.85rem;
+    margin-bottom: 0.4rem;
+}
+
+.markdown-body p {
+    margin-bottom: 0.85rem;
+    color: #3c4043;
+}
+
+.markdown-body strong {
+    color: #1f1f1f;
+    font-weight: 600;
+}
+
+.markdown-body ul {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 0.85rem;
+    color: #3c4043;
+}
+
+.markdown-body ol {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 0.85rem;
+    color: #3c4043;
+}
+
+.markdown-body blockquote {
+    border-left: 4px solid #1a73e8;
+    padding-left: 1rem;
+    margin: 0 0 0.85rem 0;
+    color: #5f6368;
+    font-style: italic;
+    background: #f1f3f4;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.markdown-body code {
+    background: #f1f3f4;
+    color: #0b57d0;
+    padding: 0.15rem 0.35rem;
+    border-radius: 0.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+}
+
+.markdown-body pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    margin-bottom: 0.85rem;
+}
+
+.markdown-body pre code {
+    background: transparent;
+    color: #4ec9b0;
+    padding: 0;
+}
+
+.markdown-body a {
+    color: #1a73e8;
+    text-decoration: underline;
+}
+
+.markdown-body hr {
+    border-color: #e0e0e0;
+    margin: 1.25rem 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f3f4;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #dadce0;
+    border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #bdc1c6;
+}
