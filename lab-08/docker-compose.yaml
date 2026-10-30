@@ -1,0 +1,54 @@
+services:
+  
+  db:
+    image: postgres:16
+    container_name: wired_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wired_db
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
+    ports:
+      - "5432:5432"
+    volumes:
+      - wired_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/1-init.sql:ro
+      - ./database/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d wired_db -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s  
+    networks:
+      - wired_network
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: wired-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - wired_network
+    environment:
+      DB_PORT: 5432
+      DB_HOST: db
+      DB_NAME: wired_db
+      DB_USER: appuser
+      DB_PASSWORD: apppass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+
+volumes:
+  wired_data:
+
+networks:
+  wired_network:
+    driver: bridge
